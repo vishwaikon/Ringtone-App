@@ -1,0 +1,1086 @@
+{
+	"info": {
+		"_postman_id": "3b723c54-7439-4f3b-b816-18f8a2bf8257",
+		"name": "RingToneApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25559171",
+		"_collection_link": "https://dark-satellite-612382.postman.co/workspace/RingToneApp-Backend~cfeb494e-4bcf-49db-acdd-5a5ee5f4e48e/collection/25559171-3b723c54-7439-4f3b-b816-18f8a2bf8257?action=share&source=collection_link&creator=25559171"
+	},
+	"item": [
+		{
+			"name": "Genre API calls",
+			"item": [
+				{
+					"name": "get all genres",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create genre",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"GID\": \"\",\r\n    \"genre_name\": \"horror\",\r\n    \"description\": \"horror\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get genre by GID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/genres/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"genres",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "genre update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"genre_name\": \"horror\",\r\n    \"description\": \"horror\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/genres/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"genres",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "genre delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/genres/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"genres",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ringtone API calls",
+			"item": [
+				{
+					"name": "get ringtone by RTID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/ringtones/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all ringtones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/ringtones",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new ringtones",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"SID\": \"3\",\r\n    \"Mobitel\": \"500\",\r\n    \"Dialog\": \"Pending\",\r\n    \"Hutch\": \"Pending\",\r\n    \"Airtel\": \"400\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/ringtones",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update ringtone by RTID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    /*\"SID\": 9,*/\r\n    \"Mobitel\": \"181\",\r\n    \"Dialog\": \"130\",\r\n    \"Hutch\": \"283\",\r\n    \"Airtel\": \"110\"\r\n}\r\n/*\r\n{\r\n    \"SID\": 5,\r\n    \"Mobitel\": 10,\r\n    \"Dialog\": 11,\r\n    \"Hutch\": 15,\r\n    \"Airtel\": 20,\r\n    \"RingToneURL\": \"https://dsjhsdssabj.com\"\r\n}\r\n*/",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/ringtones/128/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones",
+								"128",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete ringtones by RTID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/ringtones/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RingTone create with file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "ringtoneFile",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "postman-cloud:///1eee2965-4001-4f50-86e4-98abb4ba8ce9"
+								},
+								{
+									"key": "SID",
+									"value": "9",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/ringtones",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ringtone with RTID and SID without file insertion",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Mobitel\": \"520\",\r\n    \"Dialog\": \"550\",\r\n    \"Hutch\": \"540\",\r\n    \"Airtel\": \"510\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/ringtones/154/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ringtones",
+								"154",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service Providers API calls",
+			"item": [
+				{
+					"name": "get all service providers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/serviceproviders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"serviceproviders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new service provider",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service_provider\": \"newtel\",\r\n    \"ownerID\": \"952127858V\",\r\n    \"active\": 0,\r\n    \"description\": \"probably woking on it\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/serviceproviders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"serviceproviders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a service provider by SPID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/serviceproviders/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"serviceproviders",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update service provider by SPID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service_provider\": \"Hutch\",\r\n    \"ownerID\": \"987345671V\",\r\n    \"active\": 1,\r\n    \"description\": \"updated description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/serviceproviders/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"serviceproviders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get service provider by SPID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/serviceproviders/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"serviceproviders",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Song API calls",
+			"item": [
+				{
+					"name": "get all songs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/songs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new song details",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"songName\": \"Faded\",\r\n    \"AID\": \"2\",\r\n    \"language\": \"English\",\r\n    \"genreID\": \"3\",\r\n    \"artistName\": \"alan walker\",\r\n    \"songLocationURL\": \"https://www.youtube.com/results?search_query=castle+of+glass\",\r\n    \"remarks\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/songs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get the song details by SID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/songs/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update the song details by SID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"songName\": \"Faded Updated\",\r\n  \"AID\": 1,\r\n  \"language\": \"English\",\r\n  \"genreID\": 2,\r\n  \"artistName\": \"Updated Artist\",\r\n  \"remarks\": \"Updated remarks\"\r\n}\r\n/*\r\n{\r\n    \"songName\": \"Faded\",\r\n    \"AID\": \"2\",\r\n    \"language\": \"Sinhala\",\r\n    \"genreID\": \"5\",\r\n    \"artistName\": \"alan walker\",\r\n    \"songLocationURL\": \"https://www.youtube.com/results?search_query=castle+of+glass\",\r\n    \"remarks\": \"guess it works\"\r\n}\r\n*/"
+						},
+						"url": {
+							"raw": "http://localhost:5000/songs/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a song by it's SID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/songs/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new song while saving the mp3 to local folder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "songFile",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "postman-cloud:///1eee23a6-ca35-4c90-b642-4e70b7873cd1"
+								},
+								{
+									"key": "songName",
+									"value": "Faded Test with new created date",
+									"type": "text"
+								},
+								{
+									"key": "AID",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "English",
+									"type": "text"
+								},
+								{
+									"key": "genreID",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "remarks",
+									"value": "This is a test song 5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/songs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Artist API calls",
+			"item": [
+				{
+					"name": "get All artist details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/artists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"artists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create new artist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Nadun 2\",\r\n  \"lastName\": \"Madhusanka 2\",\r\n  \"phone\": \"+94,07759026677\",\r\n  \"email\": \"nadun2@gmail.com\",\r\n  \"password\": \"nadun1234\",\r\n  \"ownerID\": \"980123458V\",\r\n  \"createdBy\": \"Agent\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/artists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"artists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get artist by AID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/artists/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"artists",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update the artist by AID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Carter\",\r\n  \"phone\": \"+94,0771234567\",\r\n  \"email\": \"amal@gmail.com\",\r\n  \"password\": \"amal123\",\r\n  \"ownerID\": \"980123459V\",\r\n  \"createdBy\": \"alise\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/artists/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"artists",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a artist by AID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/artists/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"artists",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "artist Login (same thing different data)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@example.com\",\r\n    \"password\": \"test123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout user/logout",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-length": true,
+							"host": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "header",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "payload",
+									"value": "{}",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBSUQiOjUsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTcxMDUxMTUwNywiZXhwIjoxNzEwNTk3OTA3fQ.wLsTkXLxWtgbldKvs50gKceJv4yZniLNlT_b--JGsks",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/user/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin Login (same thing different data)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"admin123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login with another user",
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "header",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "payload",
+									"value": "{}",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"nadun@gmail.com\",\r\n    \"password\": \"nadun123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout admin/logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTcxMDUxMTU2MywiZXhwIjoxNzEwNTk3OTYzfQ.nKWyiXcft-T06btHPggP1cqF4AqNTkkRlhZn0uDS69U",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/admin/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"admin",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Processing",
+			"item": [
+				{
+					"name": "Song Delete Not yet working",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/songs/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Song Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "songFile",
+									"contentType": "multipart/form-data",
+									"type": "file",
+									"src": "postman-cloud:///1eee23a6-ca35-4c90-b642-4e70b7873cd1"
+								},
+								{
+									"key": "artistName",
+									"value": "Artist Name",
+									"type": "text"
+								},
+								{
+									"key": "songName",
+									"value": "Faded",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/songs/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"songs",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CSV File uploading and processing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csvFile",
+									"type": "file",
+									"src": "postman-cloud:///1eee5ce4-90c7-4180-a503-8ea90b533919"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/upload-csv",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"upload-csv"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

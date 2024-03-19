@@ -1,0 +1,435 @@
+//import database connection from '../database/connection';
+const connection = require('../database/connection');
+const fs = require('fs');
+const path = require('path');
+// Controller methods
+// Get all Ringtones
+exports.getAllRingtones = (req, res) => {
+  connection.query('SELECT * FROM ringtone_details', (error, results) => {
+    if (error) {
+      console.error('Error querying ringtones:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+};
+// Delete Ringtone
+exports.deleteRingtone = (req, res) => {
+  const RTID = req.params.id;
+  connection.query('DELETE FROM ringtone_details WHERE RTID = ?', [RTID], (error, results) => {
+    if (error) {
+      console.error('Error deleting ringtone:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    if (results.affectedRows === 0) {
+      res.status(404).json({ message: 'Ringtone not found' });
+      return;
+    }
+    res.status(204).end(); // No content to send back
+  });
+};
+// Get Ringtone by RTID
+exports.getRingtoneById = (req, res) => {
+  const rtid = req.params.id;
+  connection.query('SELECT * FROM ringtone_details WHERE RTID = ?', [rtid], (error, results) => {
+    if (error) {
+      console.error('Error querying ringtone by id:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    if (results.length === 0) {
+      res.status(404).json({ message: 'Ringtone not found' });
+      return;
+    }
+    res.json(results[0]);
+  });
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Create Ringtone
+exports.createRingtone = (req, res) => {
+  const { SID, Mobitel, Dialog, Hutch, Airtel, RingToneURL } = req.body;
+
+  connection.query(
+    'INSERT INTO ringtone_details (SID, Mobitel, Dialog, Hutch, Airtel) VALUES (?, ?, ?, ?, ?)',
+    [SID, Mobitel, Dialog, Hutch, Airtel],
+    async (error, results) => {
+      if (error) {
+        console.error('Error creating ringtone:', error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
+      }
+
+      const RTID = results.insertId;
+      console.log('RTID:', RTID);
+      try {
+        await connection.beginTransaction();
+        // Update service_provider_details based on non-empty fields
+        if (Mobitel !== undefined) {
+          await InsertServiceProvider(Mobitel, 'Mobitel', SID);
+        }
+        if (Dialog !== undefined) {
+          await InsertServiceProvider(Dialog, 'Dialog', SID);
+        }
+        if (Hutch !== undefined) {
+          await InsertServiceProvider(Hutch, 'Hutch', SID);
+        }
+        if (Airtel !== undefined) {
+          await InsertServiceProvider(Airtel, 'Airtel', SID);
+        }
+
+        await connection.commit();
+
+        res.status(201).json({ RTID, SID, Mobitel, Dialog, Hutch, Airtel });
+      } catch (error) {
+        await connection.rollback();
+        console.error('Error creating ringtone:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    }
+  );
+};
+async function InsertServiceProvider(spid, serviceProvider, SID) {
+  try {
+    // Insert into service_provider_details
+    const serviceProviderQuery = `
+      INSERT INTO service_provider_details (SPID, service_provider, ownerID, active)
+      VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
+    await connection.query(serviceProviderQuery, [spid, serviceProvider, SID]);
+  } catch (error) {
+    throw error;
+  }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Update Ringtone by RTID
+exports.updateRingtone = async (req, res) => {
+  const RTID = req.params.id;
+  const SID = req.params.sid;
+  const { Mobitel, Dialog, Hutch, Airtel } = req.body;
+
+  try {
+    await connection.beginTransaction();
+
+    // Initialize updateQuery with only non-empty fields
+    let updateQuery = 'UPDATE ringtone_details SET ';
+    const updateParams = [];
+    if (Mobitel !== undefined) {
+      updateQuery += 'Mobitel = ?, ';
+      updateParams.push(Mobitel);
+    }
+    if (Dialog !== undefined) {
+      updateQuery += 'Dialog = ?, ';
+      updateParams.push(Dialog);
+    }
+    if (Hutch !== undefined) {
+      updateQuery += 'Hutch = ?, ';
+      updateParams.push(Hutch);
+    }
+    if (Airtel !== undefined) {
+      updateQuery += 'Airtel = ?, ';
+      updateParams.push(Airtel);
+    }
+    /*
+    // Check if RingToneURL is provided, if not, retain the existing value
+    if (RingToneURL !== undefined) {
+      updateQuery += 'RingToneURL = ?, ';
+      updateParams.push(RingToneURL);
+    }
+    */
+    if (SID !== undefined) {
+      updateQuery += 'SID = ?, ';
+      updateParams.push(SID);
+    }
+    // Remove the trailing comma and space
+    updateQuery = updateQuery.replace(/,\s*$/, '');
+    updateQuery += ' WHERE RTID = ?';
+    updateParams.push(RTID);
+
+    // Execute the update query for ringtone_details
+    await connection.query(updateQuery, updateParams);
+
+    // Update service_provider_details based on non-empty fields
+    if (Mobitel !== undefined) {
+      await updateServiceProvider(Mobitel, 'Mobitel', SID, RTID);
+    }
+    if (Dialog !== undefined) {
+      await updateServiceProvider(Dialog, 'Dialog', SID, RTID);
+    }
+    if (Hutch !== undefined) {
+      await updateServiceProvider(Hutch, 'Hutch', SID, RTID);
+    }
+    if (Airtel !== undefined) {
+      await updateServiceProvider(Airtel, 'Airtel', SID, RTID);
+    }
+
+    await connection.commit();
+
+    res.status(200).json({ RTID, SID, Mobitel, Dialog, Hutch, Airtel });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error updating ringtone:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+async function updateServiceProvider(spid, serviceProvider, SID, RTID) {
+  try {
+    await connection.beginTransaction();
+    
+    // Delete previous records where SPID is 'Pending' and service_provider matches
+    const deletePendingQuery = `
+      DELETE FROM service_provider_details
+      WHERE SPID = 'Pending' AND service_provider = ?`;
+    await connection.query(deletePendingQuery, [serviceProvider]);
+    
+    // Delete previous records for the same SID and service_provider
+    const deleteQuery = `
+      DELETE spd FROM service_provider_details spd
+      JOIN ringtone_details rd ON spd.SPID = rd.${serviceProvider}
+      WHERE rd.RTID = ? AND spd.service_provider = ?`;
+    await connection.query(deleteQuery, [RTID, serviceProvider]);
+    
+
+    // Check if a record with the same SPID and service_provider exists
+    const checkQuery = `
+      SELECT ID FROM service_provider_details WHERE SPID = ? AND service_provider = ?`;
+    const queryResult = await connection.query(checkQuery, [spid, serviceProvider]);
+    const existingRecord = queryResult ? queryResult[0] : null;
+
+    if (existingRecord && existingRecord.length > 0) {
+      // Update the existing record
+      const updateQuery = `
+        UPDATE service_provider_details 
+        SET ownerID = (SELECT AID FROM song_details WHERE SID = ?), active = 1 
+        WHERE SPID = ? AND service_provider = ?`;
+      await connection.query(updateQuery, [SID, spid, serviceProvider]);
+    } else {
+      // Insert a new record
+      const insertQuery = `
+        INSERT INTO service_provider_details (SPID, service_provider, ownerID, active) 
+        VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
+      await connection.query(insertQuery, [spid, serviceProvider, SID]);
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+/*
+async function updateServiceProvider(spid, serviceProvider, SID, RTID) {
+  try {
+    await connection.beginTransaction();
+    
+    // Delete previous records where SPID is Pending
+    const deletePendingQuery = `
+    DELETE FROM service_provider_details
+    WHERE SPID = 'Pending' AND service_provider = ?`;
+    await connection.query(deletePendingQuery, [serviceProvider]);
+    
+   // Delete previous records for the same SID and service_provider
+   const deleteQuery = `
+   DELETE spd FROM service_provider_details spd
+   JOIN ringtone_details rd ON spd.SPID = rd.${serviceProvider}
+   WHERE rd.RTID = ? AND spd.service_provider = ?`;
+   await connection.query(deleteQuery, [RTID, serviceProvider]);
+    
+
+    // Check if a record with the same SPID and service_provider exists
+    const checkQuery = `
+      SELECT ID FROM service_provider_details WHERE SPID = ? AND service_provider = ?`;
+    const queryResult = await connection.query(checkQuery, [spid, serviceProvider]);
+    const existingRecord = queryResult ? queryResult[0] : null;
+
+    if (existingRecord && existingRecord.length > 0) {
+      // Update the existing record
+      const updateQuery = `
+        UPDATE service_provider_details 
+        SET ownerID = (SELECT AID FROM song_details WHERE SID = ?), active = 1 
+        WHERE SPID = ? AND service_provider = ?`;
+      await connection.query(updateQuery, [SID, spid, serviceProvider]);
+    } else {
+      // Insert a new record
+      const insertQuery = `
+        INSERT INTO service_provider_details (SPID, service_provider, ownerID, active) 
+        VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
+      await connection.query(insertQuery, [spid, serviceProvider, SID]);
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  }
+}
+*/
+/////////////////////////////////////////////////////////////////////
+/*Working Update Code some errors
+async function updateServiceProvider(spid, serviceProvider, SID) {
+  try {
+    // Check if a record with the same SPID and service_provider exists
+    const checkQuery = `
+      SELECT ID FROM service_provider_details WHERE SPID = ? AND service_provider = ?`;
+    const queryResult = await connection.query(checkQuery, [spid, serviceProvider]);
+    const existingRecord = queryResult ? queryResult[0] : null;
+
+    if (existingRecord && existingRecord.length > 0) {
+      // Update the existing record
+      const updateQuery = `
+        UPDATE service_provider_details 
+        SET ownerID = (SELECT AID FROM song_details WHERE SID = ?), active = 1 
+        WHERE SPID = ? AND service_provider = ?`;
+      await connection.query(updateQuery, [SID, spid, serviceProvider]);
+    } else {
+      // Insert a new record
+      const insertQuery = `
+        INSERT INTO service_provider_details (SPID, service_provider, ownerID, active) 
+        VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
+      await connection.query(insertQuery, [spid, serviceProvider, SID]);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+*/
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+// Create Ringtone
+exports.createRingtone = (req, res) => {
+  const { SID } = req.body;
+  const ringtoneFile = req.file; // Assuming you're using multer or a similar middleware for file upload
+
+  // Fetch song details including artist's name from song_details table based on SID
+  connection.query('SELECT AID, artistName FROM song_details WHERE SID = ?', [SID], (error, results) => {
+    if (error) {
+      console.error('Error fetching song details:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).json({ message: 'Song not found' });
+      return;
+    }
+
+    const { AID, artistName } = results[0];
+    // Construct the file path
+    const ringtoneLocationURL = `/Songs/${artistName}/RingTones/${ringtoneFile.originalname}`;
+
+    // Create RingTones directory if it doesn't exist
+    const ringtoneDirectory = path.join(__dirname, '..', 'Songs', artistName, 'RingTones');
+    if (!fs.existsSync(ringtoneDirectory)) {
+      fs.mkdirSync(ringtoneDirectory, { recursive: true });
+    }
+
+    // Move the uploaded file to the RingTones directory
+    const filePath = path.join(ringtoneDirectory, ringtoneFile.originalname);
+    fs.writeFileSync(filePath, ringtoneFile.buffer);
+
+    // Insert ringtone details into ringtone_details table
+    connection.query(
+      'INSERT INTO ringtone_details (SID, RingToneURL) VALUES (?, ?)',
+      [SID, ringtoneLocationURL],
+      (error, results) => {
+        if (error) {
+          console.error('Error creating ringtone:', error);
+          res.status(500).json({ message: 'Internal server error' });
+          return;
+        }
+
+        res.status(201).json({ RTID: results.insertId, SID, RingToneURL: ringtoneLocationURL });
+      }
+    );
+  });
+};
+// Update Ringtone by RTID
+exports.updateRingtone = async (req, res) => {
+  const RTID = req.params.id;
+  const SID = req.params.sid;
+  const { Mobitel, Dialog, Hutch, Airtel, RingToneURL } = req.body;
+
+  try {
+    await connection.beginTransaction();
+
+    // Initialize updateQuery with only non-empty fields
+    let updateQuery = 'UPDATE ringtone_details SET ';
+    const updateParams = [];
+    if (Mobitel !== undefined) {
+      updateQuery += 'Mobitel = ?, ';
+      updateParams.push(Mobitel);
+    }
+    if (Dialog !== undefined) {
+      updateQuery += 'Dialog = ?, ';
+      updateParams.push(Dialog);
+    }
+    if (Hutch !== undefined) {
+      updateQuery += 'Hutch = ?, ';
+      updateParams.push(Hutch);
+    }
+    if (Airtel !== undefined) {
+      updateQuery += 'Airtel = ?, ';
+      updateParams.push(Airtel);
+    }
+    // Check if RingToneURL is provided, if not, retain the existing value
+    if (RingToneURL !== undefined) {
+      updateQuery += 'RingToneURL = ?, ';
+      updateParams.push(RingToneURL);
+    }
+    if (SID !== undefined) {
+      updateQuery += 'SID = ?, ';
+      updateParams.push(SID);
+    }
+    // Remove the trailing comma and space
+    updateQuery = updateQuery.replace(/,\s*$/, '');
+    updateQuery += ' WHERE RTID = ?';
+    updateParams.push(RTID);
+
+    // Execute the update query
+    await connection.query(updateQuery, updateParams);
+
+    // Update service_provider_details based on non-empty fields
+    if (Mobitel !== undefined) {
+      await updateServiceProvider(Mobitel, 'Mobitel', SID);
+    }
+    if (Dialog !== undefined) {
+      await updateServiceProvider(Dialog, 'Dialog', SID);
+    }
+    if (Hutch !== undefined) {
+      await updateServiceProvider(Hutch, 'Hutch', SID);
+    }
+    if (Airtel !== undefined) {
+      await updateServiceProvider(Airtel, 'Airtel', SID);
+    }
+
+    await connection.commit();
+
+    res.status(200).json({ RTID, SID, Mobitel, Dialog, Hutch, Airtel, RingToneURL });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error updating ringtone:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+async function updateServiceProvider(spid, serviceProvider, SID) {
+  try {
+    // Insert into service_provider_details
+    const serviceProviderQuery = `
+      INSERT INTO service_provider_details (SPID, service_provider, ownerID, active)
+      VALUES (?, ?, (SELECT ownerID FROM artist_details WHERE AID = ( SELECT AID FROM song_details WHERE SID = ?)), 1)`;
+    await connection.query(serviceProviderQuery, [spid, serviceProvider, SID]);
+  } catch (error) {
+    throw error;
+  }
+}
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Close the connection when the application is terminated
+process.on('SIGINT', () => {
+    connection.end();
+    process.exit();
+  });

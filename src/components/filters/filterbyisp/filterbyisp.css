@@ -1,0 +1,18 @@
+.isp {
+    box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--primary-color);
+    padding: 5px;
+}
+
+@media screen and (max-width: 768px) {
+    .ispwrapper {
+        gap: 5px;
+        margin: 0;
+    }
+    .ispwrapper button {
+        font-size: 12px;
+        padding: 10px 10px;
+        margin: 0;
+        width: auto;
+    }
+}

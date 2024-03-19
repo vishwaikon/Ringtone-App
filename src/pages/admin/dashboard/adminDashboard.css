@@ -1,0 +1,13 @@
+.dashboard-container {
+    height: 100%;
+}
+
+.table-container {
+    height: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-search {
+        display: none;
+    }
+}

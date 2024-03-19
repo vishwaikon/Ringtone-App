@@ -1,0 +1,10 @@
+.content {
+    width: 100%;
+}
+
+.main {
+    max-height: calc(100vh - 90px);
+    padding: 20px;
+    height: 100%;
+    overflow-y: hidden;
+}

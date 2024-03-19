@@ -1,0 +1,27 @@
+.form {
+    background-color: rgba(255, 255, 255, 0.459);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.upload-form-container {
+    border: 1px solid var(--primary-color);
+    background-color: var(--white);
+    min-width: 500px;
+    height: auto;
+}
+
+.upload-form-wrapper {
+    gap: 10px;
+}
+
+.upload-form-dropbox {
+    height: 200px;
+}
