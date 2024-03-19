@@ -25,7 +25,11 @@ const Usercreate = ({ onClose }) => {
       const handleSubmit = (e) => {
         e.preventDefault();
         axios.post('http://localhost:5000/artists', formData)
-        .then(res => console.log(res))
+        .then(res =>{
+           console.log(res);
+           alert("Created Artist Profile Successfully!");
+        })
+        
         
         
         .catch(err => console.log(err))
@@ -74,17 +78,7 @@ const Usercreate = ({ onClose }) => {
                     />
                   </div>
 
-                  {/* <div className="">
-                    <input
-                      type="text"
-                      name="ownerID"
-                      id="ownerID"
-                      className="placeholder-black border-[#7E40CD] shadow appearance-none border placeholder-gray-600 rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                      value={formData.ownerID}
-                      placeholder="ID Number"
-                      onChange={handleChange}
-                    />
-                  </div> */}
+                
       
                   <div className="">
                     <input

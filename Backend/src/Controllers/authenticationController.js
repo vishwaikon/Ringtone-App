@@ -104,6 +104,33 @@ exports.login = (req, res) => {
   });
 };
 
+// user logout
+exports.userLogout = (req, res) => {
+  const userId = req.params.id;
+  // Update the active status to 0 for the user
+  connection.query('UPDATE authentication_details SET active = 0 WHERE AID = ?', [userId], (error) => {
+    if (error) {
+      console.error('Error updating user details:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    // User logged out successfully
+    res.status(200).json({ message: 'Logout successful.' });
+  });
+};
+// Admin logout
+exports.adminLogout = (req, res) => {
+  const adminEmail = req.params.email;
+  // Update the active status to 0 for the admin
+  connection.query('UPDATE admin_details SET active = 0 WHERE email = ?', [adminEmail], (error) => {
+    if (error) {
+      console.error('Error updating user details:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    // User logged out successfully
+    res.status(200).json({ message: 'Logout successful.' });
+  });
+};
+/*
 // Logout user
 exports.logout = (req, res) => {
   const userId = req.user.AID; // Extracted from JWT token
@@ -144,7 +171,7 @@ exports.logout = (req, res) => {
     });
   }
 };
-
+*/
 // Close the connection when the application is terminated
 process.on('SIGINT', () => {
   connection.end();

@@ -20,7 +20,7 @@ const Header = () => {
   const [Uname, setUname] = useState("");
 
   useEffect(() => {
-    const fetchSongs = async () => {
+    const fetchArtists = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/artists/${localStorage.getItem('AID')}`);
         setSongs(response.data); 
@@ -32,7 +32,7 @@ const Header = () => {
       }
     };
 
-    fetchSongs(); // Fetch songs when the component mounts
+    fetchArtists(); // Fetch songs when the component mounts
   }, []);
 
 
@@ -72,14 +72,16 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    // axios.post('http://localhost:5000/user/logout')
-    //   .then(res => {
-    //     location.reload(true);
-    //     navigate('/');
-    //   })
-    //   .catch(err => console.log(err));
-       localStorage.clear()
-       navigate('/')
+    
+
+       axios.post(`http://localhost:5000/user/logout/${localStorage.getItem('AID')}`)
+       .then(res => {
+        localStorage.clear();
+        navigate('/');
+        console.log(res);
+       })
+       .catch(err => console.log(err));
+        
   };
   
   

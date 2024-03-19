@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const uploadSong = multer({ storage: storage });
+const uploadRingTone = multer({ storage: storage });
 // Define API endpoints
 //Genre Controller
 const genreController = require('../controllers/genrecontroller');
@@ -16,8 +20,10 @@ const ringtoneController = require('../controllers/ringtonecontroller');
 // API endpoints for ringtones
 router.get('/ringtones', ringtoneController.getAllRingtones); // Get all ringtones
 router.post('/ringtones', ringtoneController.createRingtone); // Create a new ringtone
+//router.post('/ringtones', uploadRingTone.single('ringtoneFile'), ringtoneController.createRingtone); // Create a new ringtone with file // SID is a required field
 router.get('/ringtones/:id', ringtoneController.getRingtoneById); // Get ringtone by RTID
-router.put('/ringtones/:id', ringtoneController.updateRingtone); // Update a ringtone by RTID will update service_provider_details table
+//router.put('/ringtones/:id', ringtoneController.updateRingtone); // Update a ringtone
+router.put('/ringtones/:id/:sid', ringtoneController.updateRingtone); // Update a ringtone by RTID will update service_provider_details table
 router.delete('/ringtones/:id', ringtoneController.deleteRingtone); // Delete a ringtone
 
 //Service Provider Controller
@@ -30,18 +36,17 @@ router.get('/serviceproviders/:id', serviceProviderController.getServiceProvider
 router.delete('/serviceproviders/:id', serviceProviderController.deleteServiceProvider); // Delete a service provider
 
 //Song Controller
-const songController = require('../Controllers/songController');
+const songController = require('../controllers/songcontroller');
 // Multer configuration for file upload
-const storage = multer.memoryStorage();
-const uploadSong = multer({ storage: storage });
+
 // API endpoints for songs
 router.get('/songs', songController.getAllSongs); // Get all songs
 //router.post('/songs', songController.createSong); // Create a new song
+router.get('/songs/artist/:AID', songController.getAllSongsByAID); // Get all songs by AID
 router.post('/songs', uploadSong.single('songFile'), songController.createSong); // Create a new song // AID is a required field
 router.get('/songs/:id', songController.getSongById); // Get song by SID
 router.put('/songs/:id', uploadSong.single('songFile'), songController.updateSong); // Update a song // artistName is a required field
 //router.delete('/songs/:id', songController.deleteSong); // Delete a song
-router.get('/songs/artist/:AID', songController.getAllSongsByAID); // Get all songs by AID
 
 //Artist Controller
 const artistController = require('../controllers/artistcontroller');
@@ -58,15 +63,15 @@ const authenticationController = require('../controllers/authenticationcontrolle
 
 router.post('/login', authenticationController.login); // Login users
 //router.post('logout', authenticationController.logout); // Logout
-router.post('/user/logout', authenticationController.logout); // Logout user
-router.post('/admin/logout', authenticationController.logout); // Logout admin
+router.post('/user/logout/:id', authenticationController.userLogout); // Logout user
+router.post('/admin/logout/:email', authenticationController.adminLogout); // Logout admin
 
 //Revenue Controller
 const revenueController = require('../controllers/revenuecontroller');
 // API endpoints for revenue
 router.get('/revenue', revenueController.getAllRevenues); // Get all revenue
 router.get('/revenue/:id', revenueController.getRevenueById); // Get revenue by RID
-router.get('/revenue/owner/:nic', revenueController.getRevenueByOwnerID); // Get revenue by ownerID
+router.get('/revenue/owner/:aid', revenueController.getRevenueByOwnerID); // Get revenue by ownerID (AID)
 
 // API endpoint for CSV file upload and processing data to the database
 //const multer = require('multer');
