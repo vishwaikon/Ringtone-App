@@ -6,15 +6,9 @@ import "../forms/form.css";
 
 const Logout = ({ onClose }) => {
     const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    csvFile: null,
-  });
+  
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, csvFile: file });
-  };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,15 +17,28 @@ const Logout = ({ onClose }) => {
 
   };
   const handleLogout = () => {
-    
-
-    axios.post(`http://localhost:5000/user/logout/${localStorage.getItem('AID')}`)
+     if(localStorage.getItem('userType')==='admin'){
+        axios.post(`http://localhost:5000/user/logout/admin@gmail.com`)
     .then(res => {
      localStorage.clear();
      navigate('/');
      console.log(res);
     })
     .catch(err => console.log(err));
+     
+     }
+     else{
+        axios.post(`http://localhost:5000/user/logout/${localStorage.getItem('AID')}`)
+    .then(res => {
+     localStorage.clear();
+     navigate('/');
+     console.log(res);
+    })
+    .catch(err => console.log(err));
+
+     }
+
+    
      
 };
   return (
