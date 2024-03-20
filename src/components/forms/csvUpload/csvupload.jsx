@@ -9,8 +9,6 @@ const Csvupload = ({ onClose }) => {
     csvFile: null,
   });
 
-  
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, csvFile: file });
@@ -81,24 +79,9 @@ const Csvupload = ({ onClose }) => {
                 </label>
               </div>
 
-              {/* <div className="formcontent text-left">
-                <p className="text-[#676767] text-md font-semibold">Details</p>
-              </div> */}
+            
 
-              {/* <div className="mb-4">
-                <select
-                  name="selectedOption"
-                  value={formData.selectedOption}
-                  // onChange={handleChange}
-                  className="border-primary shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  <option value="">Distributor</option>
-                  <option value="Option 1">Dialog</option>
-                  <option value="Option 2">Hutch</option>
-                  <option value="Option 3">Mobitel</option>
-                  <option value="Option 3">Airtel</option>
-                </select>
-              </div> */}
+          
 
               <div className="flex items-center justify-center">
                 <button
