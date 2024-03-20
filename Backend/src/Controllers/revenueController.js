@@ -29,6 +29,23 @@ exports.getRevenueById = (req, res) => {
   });
 };
 
+// Get Revenue by SID
+exports.getRevenueBySID = (req, res) => {
+  const sid = req.params.sid;
+  connection.query('SELECT * FROM revenue_details WHERE SID = ?', [sid], (error, results) => {
+    if (error) {
+      console.error('Error querying revenue by SID:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    if (results.length === 0) {
+      res.status(404).json({ message: 'Revenue not found' });
+      return;
+    }
+    res.json(results);
+  });
+};
+
 // Get revenue by ownerID
 exports.getRevenueByOwnerID = (req, res) => {
   const ownerID = req.params.aid;

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import './userSongTable.css';
+import { IoMdDownload } from "react-icons/io";
 
-const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads }) => {
+import './adminSongTable.css';
+
+const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads }) => {
   const [songs, setSongs] = useState([]);
 
   useEffect(() => {
     const fetchSongsWithRevenue = async () => {
       try {
-        const storedAID = localStorage.getItem('AID');
 
         // Fetch songs
-        const songsResponse = await axios.get(`http://localhost:5000/songs/artist/${storedAID}`);
+        const songsResponse = await axios.get(`http://localhost:5000/songs/`);
         const songsData = songsResponse.data;
 
         // Fetch revenue
@@ -21,17 +22,31 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
         // Merge songs with revenue using SID
         const mergedData = [];
         songsData.forEach(song => {
+          // Find revenue data for the current song
           const songRevenue = revenueData.filter(revenue => revenue.SID === song.SID);
-          songRevenue.forEach(revenue => {
+          if (songRevenue.length === 0) {
+            // If no revenue data found, populate with placeholders
             mergedData.push({
               songName: song.songName,
               language: song.language,
-              provider: revenue.service_provider || "N/A",
-              revenue: revenue.revenue || 0,
-              date: revenue.date ? new Date(revenue.date).toLocaleDateString() : "N/A",
-              downloads: revenue.downloads || 0
+              provider: "N/A",
+              revenue: "N/A",
+              date: "N/A",
+              downloads: "N/A"
             });
-          });
+          } else {
+            // Otherwise, merge song with revenue data
+            songRevenue.forEach(revenue => {
+              mergedData.push({
+                songName: song.songName,
+                language: song.language,
+                provider: revenue.service_provider || "N/A",
+                revenue: revenue.revenue || "N/A",
+                date: revenue.date ? new Date(revenue.date).toLocaleDateString() : "N/A",
+                downloads: revenue.downloads || "N/A"
+              });
+            });
+          }
         });
 
         // Filter songs based on activeISP
@@ -54,11 +69,18 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
     fetchSongsWithRevenue();
   }, [activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads]);
 
+  const handleDownload = () => {
+    const mp3FilePath = '../../../Backend/src/Songs/Adeesha Tharud/adeesh.mp3';
+  
+    const anchor = document.createElement('a');
+    anchor.href = mp3FilePath;
+    anchor.download = 'test.mp3';
+  
+    anchor.click();
+  };
+
   return (
     <>
-      <div className="filter-section flex items-center justify-between">
-        <h1 className="font-bold text-xl">Song Revenue</h1>
-      </div>
       <div className="table-section">
         <table className="table">
           <thead>
@@ -80,6 +102,7 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
                 <td>{song.date}</td>
                 <td>{song.downloads}</td>
                 <td>Rs.{song.revenue}</td>
+                <td><button className="hover:text-green-500" onClick={handleDownload}><IoMdDownload /></button></td>
               </tr>
             ))}
           </tbody>
@@ -89,4 +112,4 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
   );
 };
 
-export default UserSongTable;
+export default AllSongTable;

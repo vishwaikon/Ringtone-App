@@ -21,6 +21,9 @@ const UserRequestTable = () => {
       const songsData = songsResponse.data;
       const ringtonesData = ringtonesResponse.data;
 
+      console.log('songs',songsData);
+      console.log('ringtonesData',ringtonesData);
+
       const mergedData = [];
 
       songsData.forEach(song => {

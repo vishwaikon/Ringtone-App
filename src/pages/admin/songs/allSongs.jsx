@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FilterByISP from '../../../components/filters/filterbyisp/filterbyisp';
 import FilterSearch from '../../../components/filters/filterSearch/filterSearch';
-import AdminSongTable from '../../../components/tables/adminSideTables/adminSongTable';
+import AllSongTable from '../../../components/tables/adminSideTables/adminAllSongsTable';
 
 import './allSongs.css'
 
@@ -18,7 +18,7 @@ const AllSongs = () => {
         </div>
       </div>
       <div className='table-container flex flex-col gap-5'>
-        <AdminSongTable activeISP={activeISP} />
+        <AllSongTable activeISP={activeISP} />
       </div>
     </div>
     
