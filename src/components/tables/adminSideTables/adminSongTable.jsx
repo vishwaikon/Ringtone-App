@@ -1,10 +1,69 @@
 import React, { useState, useEffect } from "react";
-// import jsonData from "../../../data/artistallsongs.json";
 import axios from 'axios';
+import { IoMdDownload } from "react-icons/io";
 
-import './adminSongTable.css'
+import './adminSongTable.css';
 
-const AdminSongTable = ({ activeISP }) => {
+const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads }) => {
+  const [songs, setSongs] = useState([]);
+
+  useEffect(() => {
+    const fetchSongsWithRevenue = async () => {
+      try {
+        const storedAID = localStorage.getItem('AID');
+
+        const songsResponse = await axios.get(`http://localhost:5000/songs/`);
+        let songsData = songsResponse.data;
+
+        const ringtoneResponse = await axios.get(`http://localhost:5000/ringtones/`);
+        const ringtonesData = ringtoneResponse.data;
+
+        const revenueResponse = await axios.get(`http://localhost:5000/revenue/`);
+        const revenueData = revenueResponse.data;
+
+        const songsWithRevenue = songsData.map(song => {
+          const ringtone = ringtonesData.find(ringtone => ringtone.SID === song.SID);
+          if (ringtone) {
+            const revenue = revenueData.find(revenue => revenue.RTID === ringtone.RTID);
+            return {
+              songName: song.songName,
+              language: song.language,
+              provider: revenue.service_provider || "N/A",
+              revenue: revenue.revenue || 0,
+              date: revenue.date ? new Date(revenue.date).toLocaleDateString() : "N/A",
+              downloads: revenue.downloads || 0
+            };
+          } else {
+            return {
+              songName: song.songName,
+              language: song.language,
+              provider: "N/A",
+              revenue: 0,
+              date: "N/A",
+              downloads: 0
+            };
+          }
+        });
+
+        const filteredSongs = activeISP !== 'All' ? songsWithRevenue.filter(song => song.provider === activeISP) : songsWithRevenue;
+
+        setSongs(filteredSongs);
+
+        updateAllSongsCount(songsData.length);
+
+        const totalRevenue = filteredSongs.reduce((acc, curr) => acc + curr.revenue, 0);
+        updateTotalRevenue(totalRevenue);
+
+        const totalDownloads = filteredSongs.reduce((acc, curr) => acc + (curr.downloads || 0), 0);
+        updateTotalDownloads(totalDownloads);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchSongsWithRevenue();
+  }, [activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads]);
+
   const handleDownload = () => {
     const mp3FilePath = '../../../Backend/src/Songs/Adeesha Tharud/adeesh.mp3';
   
@@ -15,133 +74,40 @@ const AdminSongTable = ({ activeISP }) => {
     anchor.click();
   };
 
-    const [tableData, setTableData] = useState([]);
-  const [totalRevenue, setTotalRevenue] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-
-  const filters = {
-    All: () => true,
-    Week: (song) => {
-      const renewalDate = new Date(song.songRenewal);
-      const lastWeek = new Date();
-      lastWeek.setDate(lastWeek.getDate() - 7);
-      return renewalDate >= lastWeek;
-    },
-    Month: (song) => {
-      const renewalDate = new Date(song.songRenewal);
-      const lastMonth = new Date();
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
-      return renewalDate >= lastMonth;
-    },
-    Last3Months: (song) => {
-      const renewalDate = new Date(song.songRenewal);
-      const lastThreeMonths = new Date();
-      lastThreeMonths.setMonth(lastThreeMonths.getMonth() - 3);
-      return renewalDate >= lastThreeMonths;
-    },
-    Year: (song) => {
-      const renewalDate = new Date(song.songRenewal);
-      const lastYear = new Date();
-      lastYear.setFullYear(lastYear.getFullYear() - 1);
-      return renewalDate >= lastYear;
-    },
-  };
-  
-  // useEffect(() => {
-  //   const filteredData = jsonData.filter((song) => {
-  //     return (
-  //       (activeISP === "All" || song[activeISP.toLowerCase()] !== undefined) &&
-  //       filters[selectedFilter](song)
-  //     );
-  //   });
-
-  //   setTableData(filteredData);
-  //   setTotalRevenue(calculateTotalRevenue(filteredData));
-  // }, [activeISP, selectedFilter]);
-  useEffect(() => {
-    axios.get('http://localhost:5000/songs')
-    .then(res => {
-      const responseData = res.data;
-      const filteredData = responseData.filter((song) => {
-        return (
-          (activeISP === "All" || song[activeISP.toLowerCase()] !== undefined) &&
-          filters[selectedFilter](song)
-        );
-      });
-  
-      setTableData(filteredData);
-      setTotalRevenue(calculateTotalRevenue(filteredData));
-    })
-    .catch(err => console.log(err));
-  }, [activeISP, selectedFilter]);
-      
-
-      const calculateTotalRevenue = (song) => {
-        if (activeISP === "All") {
-          const dialogRevenue = parseInt(song?.dialog?.replace(",", "") || 0, 10);
-          const moitelRevenue = parseInt(song?.mobitel?.replace(",", "") || 0, 10);
-          const airtelRevenue = parseInt(song?.airtel?.replace(",", "") || 0, 10);
-          const hutchRevenue = parseInt(song?.hutch?.replace(",", "") || 0, 10);
-      
-          return dialogRevenue + moitelRevenue + airtelRevenue + hutchRevenue;
-        } else {
-          return parseInt(song?.[activeISP.toLowerCase()]?.replace(",", "") || 0, 10);
-        }
-      };
-      
-      const handleFilterClick = (filter) => {
-        setSelectedFilter(filter);
-      };
-
-      return (
-        <>
-        <div className="filter-section flex items-center justify-between">
-                <h1 className="font-bold text-xl">Song Renewal</h1>
-                <div className="flex gap-5 font-bold">
-                {Object.keys(filters).map((filter) => (
-                    <p
-                    key={filter}
-                    className={`cursor-pointer ${selectedFilter === filter ? 'text-primary' : ''}`}
-                    onClick={() => handleFilterClick(filter)}
-                    >
-                    {filter}
-                    </p>
-                ))}
-                </div>
-            </div>
-        <div className="table-section">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Artist Name</th>
-                <th>Song Name</th>
-                <th>Language</th>
-                <th>Song Download</th>
-                <th>Song Renewal</th>
-                <th>Rev Downloads</th>
-                <th>Total Revenue</th>
-                <th>Download</th>
+  return (
+    <>
+    <div className="filter-section flex items-center justify-between">
+        <h1 className="font-bold text-xl">Song Revenue</h1>
+      </div>
+      <div className="table-section">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Song Name</th>
+              <th>Language</th>
+              <th>Provider</th>
+              <th>Date</th>
+              <th>Downloads</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            {songs.map((song, index) => (
+              <tr key={index}>
+              <td>{song.songName}</td>
+              <td>{song.language}</td>
+              <td>{song.provider}</td>
+              <td>{song.date}</td>
+              <td>{song.downloads}</td>
+              <td>Rs.{song.revenue}</td>
+              <td><button className="hover:text-green-500" onClick={handleDownload}><IoMdDownload /></button></td>
               </tr>
-            </thead>
-            <tbody>
-              {tableData.map((song, index) => (
-                <tr key={index} className="bg-[#EEEEEE]">
-                  <td>{song.artistName}</td>
-                  <td>{song.songName}</td>
-                  <td>{song.language}</td>
-                  <td>{song.songDownload}</td>
-                  <td>{song.songRenewal}</td>
-                  <td>{song.revenueByDownloads}</td>
-                  <td>{calculateTotalRevenue(song)} $</td>
-                  <td><button onClick={handleDownload}>Download</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        </>
-      );
-    };
-
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};
 
 export default AdminSongTable;

@@ -22,14 +22,10 @@ const UserRequestTable = () => {
       const songsData = songsResponse.data;
       const ringtonesData = ringtonesResponse.data;
 
-      console.log("Songs Data:", songsData);
-      console.log("Ringtones Data:", ringtonesData);
-
       const mergedData = [];
 
       songsData.forEach(song => {
         const correspondingRingtones = ringtonesData.filter(ringtone => ringtone.SID === song.SID);
-        console.log("correspondingRingtones Data:", correspondingRingtones);
         
         correspondingRingtones.forEach(ringtone => {
           const rowData = {
