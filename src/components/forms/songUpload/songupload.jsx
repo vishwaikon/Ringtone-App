@@ -1,6 +1,5 @@
-
-import React, { useState } from "react";
-import { IoCloudUploadOutline, IoCloseCircleOutline } from "react-icons/io5";
+import React, { useState, useEffect } from "react";
+import { IoCloudUploadOutline, IoCloseCircleOutline, IoCloudDoneOutline } from "react-icons/io5";
 import axios from "axios";
 import "../form.css";
 
@@ -12,7 +11,27 @@ const Songupload = ({ onClose }) => {
     genreID: "",
     artistName: "",
     songFile: null,
+    isUploaded: false,
+    fileSelected: false,
   });
+
+  useEffect(() => {
+    // Fetch AID from localStorage
+    const userAID = localStorage.getItem('AID');
+    if (userAID) {
+      setFormData(prevState => ({ ...prevState, AID: userAID }));
+      
+      // Fetch artist details based on AID
+      axios.get(`http://localhost:5000/users/${userAID}`)
+        .then(response => {
+          const artistName = response.data.artistName;
+          setFormData(prevState => ({ ...prevState, artistName: artistName }));
+        })
+        .catch(error => {
+          console.error('Error fetching artist details:', error);
+        });
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,7 +39,7 @@ const Songupload = ({ onClose }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData({ ...formData, songFile: file });
+    setFormData({ ...formData, songFile: file, fileSelected: true });
   };
 
   const handleSubmit = async (e) => {
@@ -41,7 +60,9 @@ const Songupload = ({ onClose }) => {
         },
       });
       console.log(res);
-      alert("Uploaded Song Successfully!")
+      setFormData({ ...formData, isUploaded: true });
+      alert("Uploaded Song Successfully!");
+      onClose();
     } catch (err) {
       console.error(err);
     }
@@ -64,22 +85,39 @@ const Songupload = ({ onClose }) => {
               <div className="upload-form-dropbox flex items-center justify-center w-full">
                 <label
                   htmlFor="dropzone-file"
-                  className="flex flex-col items-center justify-center w-full h-50 border-2 border-primary border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                  className={`flex flex-col items-center justify-center w-full h-50 border-2 border-primary border-dashed rounded-lg cursor-pointer ${
+                    formData.fileSelected
+                      ? "bg-blue-200 dark:bg-green-700 h-[200px]"
+                      : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }`}
                 >
-                  <div className="flex flex-col gap-2 items-center justify-center pt-5 pb-6">
-                    <IoCloudUploadOutline
-                      size={"4em"}
-                      color="#7E40CD"
-                      style={{ strokeWidth: 2 }}
-                    />
-                    <p className="text-sm text-black flex gap-1 font-bold dark:text-gray-400">
-                      Drag & Drop files or
-                      <span className="font-sm text-primary">Browse</span>
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Supported Formats : MP3
-                    </p>
-                  </div>
+                  {formData.fileSelected ? (
+                    <div className="flex flex-col gap-2 items-center justify-center pt-5 pb-6">
+                      <IoCloudDoneOutline
+                        size={"4em"}
+                        color={formData.fileSelected ? "#ffff" : "#7E40CD"}
+                        style={{ strokeWidth: 2 }}
+                      />
+                      <p className="text-lg font-semibold text-blue-800 dark:text-blue-200">
+                        File Selected
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2 items-center justify-center pt-5 pb-6">
+                      <IoCloudUploadOutline
+                        size={"4em"}
+                        color={formData.fileSelected ? "#3B82F6" : "#7E40CD"}
+                        style={{ strokeWidth: 2 }}
+                      />
+                      <p className="text-sm text-black flex gap-1 font-bold dark:text-gray-400">
+                        Drag & Drop files or
+                        <span className="font-sm text-primary">Browse</span>
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Supported Formats : MP3
+                      </p>
+                    </div>
+                  )}
                   <input
                     id="dropzone-file"
                     type="file"
@@ -89,86 +127,52 @@ const Songupload = ({ onClose }) => {
                 </label>
               </div>
 
-              <div className="formcontent text-left">
-                <p className="text-[#676767] text-md font-semibold">Details</p>
-              </div>
-
+              {/* Song Name */}
               <div className="">
                 <input
                   type="text"
                   name="songName"
                   id="songName"
-                  className=" placeholder-black border-primary placeholder-gray-600 shadow appearance-none border rounded w-full py-2 px-3 text-grey-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="placeholder-black border-primary placeholder-gray-600 shadow appearance-none border rounded w-full py-2 px-3 text-grey-700 leading-tight focus:outline-none focus:shadow-outline"
                   value={formData.songName}
                   placeholder="Song Name"
                   onChange={handleChange}
                 />
               </div>
+
+              {/* Language */}
               <div className="">
-                <input
-                  type="text"
-                  name="AID"
-                  id="AID"
-                  className=" placeholder-black border-primary placeholder-gray-600 shadow appearance-none border rounded w-full py-2 px-3 text-grey-700 leading-tight focus:outline-none focus:shadow-outline"
-                  value={formData.AID}
-                  placeholder="AID"
-                  onChange={handleChange}
-                />
-              </div>
-              {/* <div className="">
-                <input
-                  type="text"
-                  name="language"
-                  id="language"
-                  className="placeholder-black border-primary placeholder-gray-600 shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                  value={formData.language}
-                  placeholder="Language"
-                  onChange={handleChange}
-                />
-              </div> */}
-
-                <div className="">
                 <select
                   name="language"
                   value={formData.language}
-                   onChange={handleChange}
+                  onChange={handleChange}
                   className="border-primary shadow appearance-none border rounded w-full py-2 px-3 text-gray-600 leading-tight focus:outline-none focus:shadow-outline placeholder-text-gray"
                 >
-                  <option value="" className="text-gray-600">Language</option>
-                  <option value="Sinhala" className="text-gray-600">Sinhala</option>
-                  <option value="English" className="text-gray-600">English</option>
-                  <option value="Tamil" className="text-gray-600">Tamil</option>
-                  <option value="Hindi" className="text-gray-600">Hindi</option>
+                  <option value="">Language</option>
+                  <option value="Sinhala">Sinhala</option>
+                  <option value="English">English</option>
+                  <option value="Tamil">Tamil</option>
+                  <option value="Hindi">Hindi</option>
                 </select>
               </div>
 
-
-              {/* <div className="">
-                <input
-                  type="text"
-                  name="genreID"
-                  id="genreID"
-                  className="placeholder-black border-primary placeholder-gray-600 shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                  value={formData.genreID}
-                  placeholder="Genre ID"
-                  onChange={handleChange}
-                />
-              </div> */}
-               <div className="">
+              {/* Genre ID */}
+              <div className="">
                 <select
                   name="genreID"
                   value={formData.genreID}
-                   onChange={handleChange}
+                  onChange={handleChange}
                   className="border-primary shadow appearance-none border rounded w-full py-2 px-3 text-gray-600 leading-tight focus:outline-none focus:shadow-outline placeholder-text-gray"
                 >
-                  <option value="" className="text-gray-600">Genre ID</option>
-                  <option value="1" className="text-gray-600">1</option>
-                  <option value="2" className="text-gray-600">2</option>
-                  <option value="3" className="text-gray-600">3</option>
-                  <option value="3" className="text-gray-600">4</option>
+                  <option value="">Genre</option>
+                  <option value="1">Rock</option>
+                  <option value="2">Rap</option>
+                  <option value="3">Lofi</option>
+                  <option value="3">Jass</option>
                 </select>
               </div>
 
+              {/* Artist Name */}
               <div className="">
                 <input
                   type="text"
@@ -181,6 +185,7 @@ const Songupload = ({ onClose }) => {
                 />
               </div>
 
+              {/* Upload Button */}
               <div className="flex items-center justify-center">
                 <button
                   type="submit"
@@ -198,4 +203,3 @@ const Songupload = ({ onClose }) => {
 };
 
 export default Songupload;
-
