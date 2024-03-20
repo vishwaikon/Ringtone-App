@@ -14,7 +14,7 @@ const AdminDashboard = () => {
       <div className='filter-container flex justify-between'>
         <FilterByISP setActiveISP={setActiveISP} />
         <div className='filter-search flex gap-5'>
-          <FilterSearch spanText="Filter by Songs" inputPlaceholder="Type to filter..." />
+          {/*<FilterSearch spanText="Filter by Songs" inputPlaceholder="Type to filter..." />*/}
         </div>
       </div>
       <div className='table-container flex flex-col gap-5'>

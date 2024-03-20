@@ -20,6 +20,7 @@ const ArtistList = () => {
                 
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Date</th>
                 <th>Phone</th>
                 <th>Email</th>
                 
@@ -31,6 +32,7 @@ const ArtistList = () => {
                 <tr key={index} className="bg-[#EEEEEE]">
                   <td>{artist.firstName}</td>
                   <td>{artist.lastName}</td>
+                  <td>{artist.createdDate}</td>
                   <td>{artist.phone}</td>
                   <td>{artist.email}</td>
                 
