@@ -19,7 +19,6 @@ const AdminRequestTable = () => {
           Hutch: song.Hutch || "Pending",
           Airtel: song.Airtel || "Pending",
           editModes: {
-            
             Mobitel: false,
             Dialog: false,
             Hutch: false,
@@ -76,7 +75,6 @@ const AdminRequestTable = () => {
   };
 
   const handleSave = (index) => {
-  
     const newData = [...tableData];
     Object.keys(newData[index].editModes).forEach((field) => {
       newData[index].editModes[field] = false;
@@ -130,7 +128,7 @@ const AdminRequestTable = () => {
                 <td>{song.SID}</td>
                 <td className="td-wrapper">
                   <input
-                    className="w-[100px]"
+                    className="w-[100px] text-center"
                     type="text"
                     value={song.Mobitel}
                     onChange={(e) =>
@@ -139,19 +137,20 @@ const AdminRequestTable = () => {
                     readOnly={!song.editModes.Mobitel}
                   />
                   <div className="buttons float-right">
-                    <button className="mr-1" onClick={() => toggleEditMode(index, "Mobitel")}>
-                      <FaEdit />
-                    </button>
-                    {song.editModes.Mobitel && (
+                    {song.editModes.Mobitel ? (
                       <button onClick={() => handleSave(index)}>
                         <MdDoneOutline />
+                      </button>
+                    ) : (
+                      <button onClick={() => toggleEditMode(index, "Mobitel")}>
+                        <FaEdit />
                       </button>
                     )}
                   </div>
                 </td>
                 <td className="td-wrapper">
                   <input
-                    className="w-[100px]"
+                    className="w-[100px] text-center"
                     type="text"
                     value={song.Dialog}
                     onChange={(e) =>
@@ -160,19 +159,20 @@ const AdminRequestTable = () => {
                     readOnly={!song.editModes.Dialog}
                   />
                   <div className="buttons float-right">
-                    <button className="mr-1" onClick={() => toggleEditMode(index, "Dialog")}>
-                      <FaEdit />
-                    </button>
-                    {song.editModes.Dialog && (
+                    {song.editModes.Dialog ? (
                       <button onClick={() => handleSave(index)}>
                         <MdDoneOutline />
+                      </button>
+                    ) : (
+                      <button onClick={() => toggleEditMode(index, "Dialog")}>
+                        <FaEdit />
                       </button>
                     )}
                   </div>
                 </td>
                 <td className="td-wrapper">
                   <input
-                    className="w-[100px]"
+                    className="w-[100px] text-center"
                     type="text"
                     value={song.Hutch}
                     onChange={(e) =>
@@ -181,19 +181,20 @@ const AdminRequestTable = () => {
                     readOnly={!song.editModes.Hutch}
                   />
                   <div className="buttons float-right">
-                    <button className="mr-1" onClick={() => toggleEditMode(index, "Hutch")}>
-                      <FaEdit />
-                    </button>
-                    {song.editModes.Hutch && (
+                    {song.editModes.Hutch ? (
                       <button onClick={() => handleSave(index)}>
                         <MdDoneOutline />
+                      </button>
+                    ) : (
+                      <button onClick={() => toggleEditMode(index, "Hutch")}>
+                        <FaEdit />
                       </button>
                     )}
                   </div>
                 </td>
                 <td className="td-wrapper">
                   <input
-                    className="w-[100px]"
+                    className="w-[100px] text-center"
                     type="text"
                     value={song.Airtel}
                     onChange={(e) =>
@@ -202,12 +203,13 @@ const AdminRequestTable = () => {
                     readOnly={!song.editModes.Airtel}
                   />
                   <div className="buttons float-right">
-                    <button className="mr-1" onClick={() => toggleEditMode(index, "Airtel")}>
-                      <FaEdit />
-                    </button>
-                    {song.editModes.Airtel && (
+                    {song.editModes.Airtel ? (
                       <button onClick={() => handleSave(index)}>
                         <MdDoneOutline />
+                      </button>
+                    ) : (
+                      <button onClick={() => toggleEditMode(index, "Airtel")}>
+                        <FaEdit />
                       </button>
                     )}
                   </div>

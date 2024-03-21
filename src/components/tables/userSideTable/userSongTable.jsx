@@ -43,9 +43,9 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
         // Update counts and revenue
         updateAllSongsCount(filteredSongs.length);
         const totalRevenue = filteredSongs.reduce((acc, curr) => acc + curr.revenue, 0);
-        updateTotalRevenue(totalRevenue);
+        updateTotalRevenue(totalRevenue.toLocaleString());
         const totalDownloads = filteredSongs.reduce((acc, curr) => acc + curr.downloads, 0);
-        updateTotalDownloads(totalDownloads);
+        updateTotalDownloads(totalDownloads.toLocaleString());
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -72,14 +72,14 @@ const UserSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upd
             </tr>
           </thead>
           <tbody>
-            {songs.map((song, index) => (
+            {songs.slice().reverse().map((song, index) => (
               <tr key={index}>
                 <td>{song.songName}</td>
                 <td>{song.language}</td>
                 <td>{song.provider}</td>
                 <td>{song.date}</td>
-                <td>{song.downloads}</td>
-                <td>Rs.{song.revenue}</td>
+                <td>{song.downloads.toLocaleString()}</td>
+                <td>Rs.{song.revenue.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

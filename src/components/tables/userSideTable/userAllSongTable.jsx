@@ -83,7 +83,7 @@ const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upda
             </tr>
           </thead>
           <tbody>
-            {songs.map((song, index) => (
+            {songs.slice().reverse().map((song, index) => (
               <tr key={index}>
                 <td>{song.songName}</td>
                 <td>{song.language}</td>

@@ -73,7 +73,7 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
             </tr>
           </thead>
           <tbody>
-            {songs.map((song, index) => (
+            {songs.slice().reverse().map((song, index) => (
               <tr key={index}>
               <td>{song.songName}</td>
               <td>{song.language}</td>
