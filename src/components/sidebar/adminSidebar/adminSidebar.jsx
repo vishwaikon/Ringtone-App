@@ -44,12 +44,12 @@ const AdminSidebar = () => {
             <p>Dashboard</p>
           </Link>
         </li>
-        {/*<li>
-          <Link to="/admin-dashboard/all-songs" className={` ${location.pathname === '/all-songs' ? 'active' : ''} flex items-center rounded-xl p-2 gap-5`}>
+        <li>
+          <Link to="/admin-dashboard/all-songs" className={` ${location.pathname === '/admin-dashboard/all-songs' ? 'active' : ''} flex items-center rounded-xl p-2 gap-5`}>
             <FaItunesNote size={"1.5em"} />
             <p>All songs</p>
           </Link>
-        </li>*/}
+        </li>
         <li>
           <Link to="/admin-dashboard/request-songs" className={` ${location.pathname === '/admin-dashboard/request-songs' ? 'active' : ''} flex items-center rounded-xl p-2 gap-5`}>
             <MdOutlinePendingActions size={"1.5em"} />

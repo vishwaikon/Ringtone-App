@@ -94,9 +94,9 @@ async function InsertServiceProvider(spid, serviceProvider, SID) {
   try {
     // Insert into service_provider_details
     const serviceProviderQuery = `
-      INSERT INTO service_provider_details (SPID, service_provider, ownerID, active)
-      VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
-    await connection.query(serviceProviderQuery, [spid, serviceProvider, SID]);
+      INSERT INTO service_provider_details (SPID, service_provider, ownerID, active, SID)
+      VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1, ?)`;
+    await connection.query(serviceProviderQuery, [spid, serviceProvider, SID, SID]);
   } catch (error) {
     throw error;
   }
@@ -206,9 +206,9 @@ async function updateServiceProvider(spid, serviceProvider, SID, RTID) {
     } else {
       // Insert a new record
       const insertQuery = `
-        INSERT INTO service_provider_details (SPID, service_provider, ownerID, active) 
-        VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1)`;
-      await connection.query(insertQuery, [spid, serviceProvider, SID]);
+        INSERT INTO service_provider_details (SPID, service_provider, ownerID, active, SID) 
+        VALUES (?, ?, (SELECT AID FROM song_details WHERE SID = ?), 1, ?)`;
+      await connection.query(insertQuery, [spid, serviceProvider, SID, SID]);
     }
 
     await connection.commit();

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import FilterByISP from '../../../components/filters/filterbyisp/filterbyisp';
 import FilterSearch from '../../../components/filters/filterSearch/filterSearch';
-import UserSongTable from '../../../components/tables/userSideTable/userSongTable';
+import AllSongTable from '../../../components/tables/userSideTable/userAllSongTable';
 
 import './allSongs.css'
 
@@ -20,7 +20,7 @@ const AllSongs = () => {
         </div>
       </div>
       <div className='table-container flex flex-col gap-5'>
-        <UserSongTable activeISP={activeISP} />
+        <AllSongTable activeISP={activeISP} />
       </div>
     </div>
   );

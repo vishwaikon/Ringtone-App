@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { IoMdDownload } from "react-icons/io";
 
 import './adminSongTable.css';
 
-const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads }) => {
+const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads }) => {
   const [songs, setSongs] = useState([]);
 
   useEffect(() => {
@@ -21,17 +22,31 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
         // Merge songs with revenue using SID
         const mergedData = [];
         songsData.forEach(song => {
+          // Find revenue data for the current song
           const songRevenue = revenueData.filter(revenue => revenue.SID === song.SID);
-          songRevenue.forEach(revenue => {
+          if (songRevenue.length === 0) {
+            // If no revenue data found, populate with placeholders
             mergedData.push({
               songName: song.songName,
               language: song.language,
-              provider: revenue.service_provider || "N/A",
-              revenue: revenue.revenue || 0,
-              date: revenue.date ? new Date(revenue.date).toLocaleDateString() : "N/A",
-              downloads: revenue.downloads || 0
+              provider: "N/A",
+              revenue: "N/A",
+              date: "N/A",
+              downloads: "N/A"
             });
-          });
+          } else {
+            // Otherwise, merge song with revenue data
+            songRevenue.forEach(revenue => {
+              mergedData.push({
+                songName: song.songName,
+                language: song.language,
+                provider: revenue.service_provider || "N/A",
+                revenue: revenue.revenue || "N/A",
+                date: revenue.date ? new Date(revenue.date).toLocaleDateString() : "N/A",
+                downloads: revenue.downloads || "N/A"
+              });
+            });
+          }
         });
 
         // Filter songs based on activeISP
@@ -40,12 +55,11 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
         // Set songs state
         setSongs(filteredSongs);
 
-        updateAllSongsCount(songsData.length);
-
+        // Update counts and revenue
+        updateAllSongsCount(filteredSongs.length);
         const totalRevenue = filteredSongs.reduce((acc, curr) => acc + curr.revenue, 0);
         updateTotalRevenue(totalRevenue);
-
-        const totalDownloads = filteredSongs.reduce((acc, curr) => acc + (curr.downloads || 0), 0);
+        const totalDownloads = filteredSongs.reduce((acc, curr) => acc + curr.downloads, 0);
         updateTotalDownloads(totalDownloads);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -55,11 +69,18 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
     fetchSongsWithRevenue();
   }, [activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads]);
 
+  const handleDownload = () => {
+    const mp3FilePath = '../../../Backend/src/Songs/Adeesha Tharud/adeesh.mp3';
+  
+    const anchor = document.createElement('a');
+    anchor.href = mp3FilePath;
+    anchor.download = 'test.mp3';
+  
+    anchor.click();
+  };
+
   return (
     <>
-    <div className="filter-section flex items-center justify-between">
-        <h1 className="font-bold text-xl">Song Revenue</h1>
-      </div>
       <div className="table-section">
         <table className="table">
           <thead>
@@ -75,12 +96,13 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
           <tbody>
             {songs.slice().reverse().map((song, index) => (
               <tr key={index}>
-              <td>{song.songName}</td>
-              <td>{song.language}</td>
-              <td>{song.provider}</td>
-              <td>{song.date}</td>
-              <td>{song.downloads}</td>
-              <td>Rs.{song.revenue}</td>
+                <td>{song.songName}</td>
+                <td>{song.language}</td>
+                <td>{song.provider}</td>
+                <td>{song.date}</td>
+                <td>{song.downloads}</td>
+                <td>Rs.{song.revenue}</td>
+                <td><button className="hover:text-green-500" onClick={handleDownload}><IoMdDownload /></button></td>
               </tr>
             ))}
           </tbody>
@@ -90,4 +112,4 @@ const AdminSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, up
   );
 };
 
-export default AdminSongTable;
+export default AllSongTable;

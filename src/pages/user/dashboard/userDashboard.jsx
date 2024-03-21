@@ -62,21 +62,21 @@ const UserDashboard = () => {
             <FaItunesNote size={"2em"} />
             <div className="card-items">
               <h1 className="text-2xl font-medium">{totalRevenue}</h1>
-              <p className="sub-title text-sm">Revenue Songs</p>
+              <p className="sub-title text-sm">Revenue</p>
             </div>
           </div>
           <div className="stats-card px-10 py-5  bg-white text-primary flex flex-row items-center gap-5">
             <BsMusicNoteList size={"2em"} />
             <div className="card-items">
               <h1 className="text-2xl font-medium">{allSongsCount}</h1>
-              <p className="sub-title text-sm">All Songs</p>
+              <p className="sub-title text-sm">Songs</p>
             </div>
           </div>
           <div className="stats-card px-10 py-5  bg-white text-primary flex flex-row items-center gap-5">
             <LuDownloadCloud size={"2em"} />
             <div className="card-items">
               <h1 className="text-2xl font-medium">{totalDownloads}</h1>
-              <p className="sub-title text-sm">Download</p>
+              <p className="sub-title text-sm">Downloads</p>
             </div>
           </div>
         </div>

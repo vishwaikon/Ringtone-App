@@ -22,12 +22,20 @@ function readCSVFile(csvFilePath) {
   });
 }
 
+async function getSIDFromServiceProvider(RingToneID, ISPID) {
+  const query = `
+    SELECT SID FROM service_provider_details WHERE service_provider = ? AND SPID = ?`;
+  const results = await executeQuery(query, [ISPID, RingToneID]);
+  return results.length > 0 ? results[0].SID : null;
+}
+
 module.exports = {
   processCSVAndInsertData: async (csvFilePath, callback) => {
     try {
       // Read and parse the CSV file
       const results = await readCSVFile(csvFilePath);
       console.log('CSV Parsing Completed. Total Rows:', results.length);
+      
 
       // Process each row of the CSV file
       const processedRows = [];
@@ -91,6 +99,12 @@ async function getOwnerDetails(RingToneID, ISPID) {
 }
 
 async function insertRevenueDetails(RingToneID, ownerDetails, Date, Revenue, Downloads, ISPID) {
+  // Get the SID corresponding to the RingtoneID and ISPID
+  const SID = await getSIDFromServiceProvider(RingToneID, ISPID);
+  if (!SID) {
+    console.error(`SID not found for RingToneID: ${RingToneID} and ISPID: ${ISPID}`);
+    return;
+  }
   // Check if the combination of RingToneID and ISPID already exists in the revenue_details table
   const existingDataQuery = `
     SELECT COUNT(*) AS count FROM revenue_details WHERE RTID = ? AND service_provider = ?`;
@@ -104,8 +118,8 @@ async function insertRevenueDetails(RingToneID, ownerDetails, Date, Revenue, Dow
 
   // Insert new data if the combination does not exist
   const query = `
-    INSERT INTO revenue_details (RTID, ownerID, createdBy, createdDate, date, revenue, downloads, service_provider) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    INSERT INTO revenue_details (RTID, ownerID, createdBy, createdDate, date, revenue, downloads, service_provider, SID) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   const values = [
     RingToneID,
     ownerDetails.AID,
@@ -114,7 +128,8 @@ async function insertRevenueDetails(RingToneID, ownerDetails, Date, Revenue, Dow
     Date,
     Revenue,
     Downloads,
-    ISPID
+    ISPID,
+    SID
   ];
   await executeQuery(query, values);
 }

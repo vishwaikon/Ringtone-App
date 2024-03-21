@@ -22,6 +22,9 @@ const UserRequestTable = () => {
       const songsData = songsResponse.data;
       const ringtonesData = ringtonesResponse.data;
 
+      console.log('songs',songsData);
+      console.log('ringtonesData',ringtonesData);
+
       const mergedData = [];
 
       songsData.forEach(song => {
@@ -122,7 +125,7 @@ const UserRequestTable = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((song, index) => (
+            {tableData.slice().reverse().map((song, index) => (
               <tr key={index}>
                 <td>{song.songName}</td>
                 <td>{song.createdDate? new Date(song.createdDate).toLocaleDateString() : "N/A"}</td>

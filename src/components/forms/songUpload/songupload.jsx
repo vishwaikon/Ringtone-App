@@ -63,8 +63,12 @@ const Songupload = ({ onClose }) => {
       setFormData({ ...formData, isUploaded: true });
       alert("Uploaded Song Successfully!");
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       console.error(err);
+      alert("Uploaded Song Failed!");
     }
   };
 
