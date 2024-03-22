@@ -94,7 +94,7 @@ const AdminRequestTable = () => {
   return (
     <>
       <div className="filter-section flex items-center justify-between">
-        <h1 className="font-bold text-xl">Song Renewal</h1>
+        {/*<h1 className="font-bold text-xl">Song Request</h1>
         <div className="flex gap-5 font-bold">
           {Object.keys(filters).map((filter) => (
             <p
@@ -107,14 +107,14 @@ const AdminRequestTable = () => {
               {filter}
             </p>
           ))}
-        </div>
+        </div>*/}
       </div>
       <div className="table-section">
         <table className="table userRequestTable">
           <thead>
             <tr>
-              <th>Ringtone ID</th>
-              <th>Song ID</th>
+              <th>Song Title</th>
+              <th>Artist Name</th>
               <th>Mobitel</th>
               <th>Dialog</th>
               <th>Hutch</th>

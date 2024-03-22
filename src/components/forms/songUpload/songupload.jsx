@@ -44,7 +44,7 @@ const Songupload = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const formDataToSend = new FormData();
     formDataToSend.append("songName", formData.songName);
     formDataToSend.append("AID", formData.AID);
@@ -52,13 +52,26 @@ const Songupload = ({ onClose }) => {
     formDataToSend.append("genreID", formData.genreID);
     formDataToSend.append("artistName", formData.artistName);
     formDataToSend.append("songFile", formData.songFile);
-
+  
     try {
       const res = await axios.post("http://localhost:5000/songs", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+  
+      // Extract SID from the response
+      const SID = res.data.SID;
+  
+      // Create a new ringtone with SID and other columns set to null
+      await axios.post("http://localhost:5000/ringtones", {
+        SID: SID,
+        Mobitel: "pending",
+        Dialog: "pending",
+        Hutch: "pending",
+        Airtel: "pending"
+      });
+  
       console.log(res);
       setFormData({ ...formData, isUploaded: true });
       alert("Uploaded Song Successfully!");

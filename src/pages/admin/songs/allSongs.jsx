@@ -13,8 +13,8 @@ const AllSongs = () => {
       <div className='filter-container flex justify-between'>
         <FilterByISP setActiveISP={setActiveISP} />
         <div className='filter-wrapper flex gap-5'>
-          <FilterSearch spanText="Filter by All Songs" inputPlaceholder="Type to filter..." />
-          <FilterSearch spanText="Filter by Revenue song" inputPlaceholder="Type to filter..." />
+          <FilterSearch spanText="" inputPlaceholder="Song title" />
+          <FilterSearch spanText="" inputPlaceholder="Artist name" />
         </div>
       </div>
       <div className='table-container flex flex-col gap-5'>

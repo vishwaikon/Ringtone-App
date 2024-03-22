@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import FilterSearch from '../../../components/filters/filterSearch/filterSearch';
 import "./ArtistList.css"
 
 const ArtistList = () => {
@@ -13,6 +14,13 @@ const ArtistList = () => {
   },[]);
  
   return (
+    <>
+    <div className='filter-container flex justify-between'>
+        <div></div>
+        <div className='filter-wrapper flex gap-5 py-3'>
+          <FilterSearch spanText="" inputPlaceholder="Artist name" />
+        </div>
+      </div>
     <div className="table-section">
           <table className="table">
             <thead>
@@ -28,7 +36,7 @@ const ArtistList = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((artist, index) => (
+              {data.slice().reverse().map((artist, index) => (
                 <tr key={index} className="bg-[#EEEEEE]">
                   <td>{artist.firstName}</td>
                   <td>{artist.lastName}</td>
@@ -43,6 +51,7 @@ const ArtistList = () => {
             </tbody>
           </table>
         </div>
+        </>
   )
 }
 
