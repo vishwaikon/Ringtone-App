@@ -6,7 +6,7 @@ import { FaItunesNote } from "react-icons/fa";
 
 import Songupload from "../../../components/forms/songUpload/songupload";
 import FilterByISP from "../../../components/filters/filterbyisp/filterbyisp";
-import FilterSearch from "../../../components/filters/filterSearch/filterSearch";
+
 import UserSongTable from "../../../components/tables/userSideTable/userSongTable";
 
 import "./userDashboard.css";
@@ -17,6 +17,16 @@ const UserDashboard = () => {
   const [allSongsCount, setAllSongsCount] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalDownloads, setTotalDownloads] = useState(0);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
+  const handleFromDateChange = (event) => {
+    setFromDate(event.target.value);
+  };
+
+  const handleToDateChange = (event) => {
+    setToDate(event.target.value);
+  };
 
   useEffect(() => {
     // Function to update all songs count
@@ -81,10 +91,17 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
-      <div className="filter-container flex justify-between">
+      <div className='filter-container flex justify-between'>
         <FilterByISP setActiveISP={setActiveISP} />
-        <div className="filter-search flex gap-5">
-          {/*<FilterSearch spanText="Filter by Songs" inputPlaceholder="Type to filter..." />*/}
+        <div className='filter-wrapper flex gap-5'>
+          <div className='date-filter flex gap-2 items-center'>
+            <label>From:</label>
+            <input className='bg-[#EEEEEE] rounded-md p-1' type='date' value={fromDate} onChange={handleFromDateChange} />
+          </div>
+          <div className='date-filter flex gap-2 items-center'>
+            <label>To:</label>
+            <input type='date' className='bg-[#EEEEEE] rounded-md p-1' value={toDate} onChange={handleToDateChange} />
+          </div>
         </div>
       </div>
       <div className="table-container flex flex-col gap-5">

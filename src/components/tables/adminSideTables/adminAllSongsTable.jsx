@@ -70,11 +70,11 @@ const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upda
   }, [activeISP, updateAllSongsCount, updateTotalRevenue, updateTotalDownloads]);
 
   const handleDownload = () => {
-    const mp3FilePath = '../../../Backend/src/Songs/Adeesha Tharud/adeesh.mp3';
+    const mp3FilePath = '/songs/adeesh.mp3';
   
     const anchor = document.createElement('a');
     anchor.href = mp3FilePath;
-    anchor.download = 'test.mp3';
+    anchor.download = 'Ringtoon.mp3';
   
     anchor.click();
   };
@@ -85,7 +85,8 @@ const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upda
         <table className="table">
           <thead>
             <tr>
-              <th>Song Name</th>
+              <th>Song Title</th>
+              <th>Artist Name</th>
               <th>Language</th>
               <th>Provider</th>
               <th>Date</th>
@@ -97,6 +98,7 @@ const AllSongTable = ({ activeISP, updateAllSongsCount, updateTotalRevenue, upda
             {songs.slice().reverse().map((song, index) => (
               <tr key={index}>
                 <td>{song.songName}</td>
+                <td>Artist</td>
                 <td>{song.language}</td>
                 <td>{song.provider}</td>
                 <td>{song.date}</td>

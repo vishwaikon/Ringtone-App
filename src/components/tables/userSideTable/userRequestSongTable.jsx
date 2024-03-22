@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import FilterSearch from "../../../components/filters/filterSearch/filterSearch";
 
 import './userSongTable.css'
 
@@ -8,6 +9,16 @@ const UserRequestTable = () => {
   const [tableData, setTableData] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [userAID, setUserAID] = useState("");
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
+  const handleFromDateChange = (event) => {
+    setFromDate(event.target.value);
+  };
+
+  const handleToDateChange = (event) => {
+    setToDate(event.target.value);
+  };
 
   const fetchTableData = async () => {
     try {
@@ -33,10 +44,10 @@ const UserRequestTable = () => {
         correspondingRingtones.forEach(ringtone => {
           const rowData = {
             ...song,
-            dialog: ringtone.Dialog !== null ? 'published' : 'pending',
-            hutch: ringtone.Hutch !== null ? 'published' : 'pending',
-            airtel: ringtone.Airtel !== null ? 'published' : 'pending',
-            mobitel: ringtone.Mobitel !== null ? 'published' : 'pending'
+            dialog: ringtone.Dialog !== 'pending' ? 'published' : 'pending',
+            hutch: ringtone.Hutch !== 'pending' ? 'published' : 'pending',
+            airtel: ringtone.Airtel !== 'pending' ? 'published' : 'pending',
+            mobitel: ringtone.Mobitel !== 'pending' ? 'published' : 'pending'
           };
           mergedData.push(rowData);
         });
@@ -100,16 +111,10 @@ const UserRequestTable = () => {
     <>
       <div className="filter-section flex items-center justify-between">
         <h1 className="font-bold text-xl">Song Requests</h1>
-        <div className="flex gap-5 font-bold">
-          {Object.keys(filters).map((filter) => (
-            <p
-              key={filter}
-              className={`cursor-pointer ${selectedFilter === filter ? 'text-primary' : ''}`}
-              onClick={() => handleFilterClick(filter)}
-            >
-              {filter}
-            </p>
-          ))}
+        <div className='filter-container flex justify-between'>
+          <div className='filter-wrapper flex gap-5'>
+            <FilterSearch inputPlaceholder="Artist Name" />
+          </div>
         </div>
       </div>
       <div className="table-section">
