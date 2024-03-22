@@ -27,7 +27,41 @@ exports.getAllSongs = (req, res) => {
     res.json(results);
   });
 };
+// Create Song
+exports.createSong = (req, res) => {
+  const { songName, artistName, language, genreID, remarks, AID } = req.body; // Modified to accept artistName directly
+  const songFile = req.file; // Assuming you're using multer or a similar middleware for file upload
 
+  // Construct the file path
+  const songLocationURL = `/Songs/${artistName}/${songFile.originalname}`;
+
+  // Create directory if it doesn't exist
+  const artistDirectory = path.join(__dirname, '..', 'Songs', artistName);
+  if (!fs.existsSync(artistDirectory)) {
+    fs.mkdirSync(artistDirectory, { recursive: true });
+  }
+
+  // Move the uploaded file to the artist directory
+  const filePath = path.join(artistDirectory, songFile.originalname);
+  fs.writeFileSync(filePath, songFile.buffer);
+
+  // Insert song details into song_details table
+  connection.query(
+    'INSERT INTO song_details (songName, AID, language, genreID, artistName, songLocationURL, remarks, createdDate) VALUES (?, ?, ?, ?, ?, ?, ?, CURDATE())',
+    [songName, AID, language, genreID, artistName, songLocationURL, remarks],
+    (error, results) => {
+      if (error) {
+        console.error('Error creating song:', error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
+      }
+
+      const SID = results.insertId;
+      res.status(201).json({ SID, AID,songName, artistName, language, genreID, songLocationURL, remarks, createdDate: new Date().toISOString().split('T')[0] });
+    }
+  );
+};
+/*
 // Create Song
 exports.createSong = (req, res) => {
   const { songName, AID, language, genreID, remarks } = req.body;
@@ -79,7 +113,7 @@ exports.createSong = (req, res) => {
     );
   });
 };
-
+*/
 // Get Song by SID
 exports.getSongById = (req, res) => {
   const sid = req.params.id;

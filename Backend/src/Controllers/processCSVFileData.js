@@ -105,7 +105,9 @@ async function insertRevenueDetails(RingToneID, ownerDetails, Date, Revenue, Dow
     console.error(`SID not found for RingToneID: ${RingToneID} and ISPID: ${ISPID}`);
     return;
   }
-  // Check if the combination of RingToneID and ISPID already exists in the revenue_details table
+  //Now there can be multiple entries for the same RingToneID and ISPID in the revenue_details table.
+  /* 
+  // Check if the combinati on of RingToneID and ISPID already exists in the revenue_details table
   const existingDataQuery = `
     SELECT COUNT(*) AS count FROM revenue_details WHERE RTID = ? AND service_provider = ?`;
   const existingData = await executeQuery(existingDataQuery, [RingToneID, ISPID]);
@@ -115,7 +117,7 @@ async function insertRevenueDetails(RingToneID, ownerDetails, Date, Revenue, Dow
     console.log(`Data already exists for RingToneID: ${RingToneID} and ISPID: ${ISPID}. Skipping insertion.`);
     return;
   }
-
+  */
   // Insert new data if the combination does not exist
   const query = `
     INSERT INTO revenue_details (RTID, ownerID, createdBy, createdDate, date, revenue, downloads, service_provider, SID) 

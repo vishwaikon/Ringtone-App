@@ -70,8 +70,13 @@ router.post('/admin/logout/:email', authenticationController.adminLogout); // Lo
 const revenueController = require('../controllers/revenuecontroller');
 // API endpoints for revenue
 router.get('/revenue', revenueController.getAllRevenues); // Get all revenue
-router.get('/revenue/:id', revenueController.getRevenueById); // Get revenue by RID
+//router.get('/revenue/:id', revenueController.getRevenueById); // Get revenue by RID
 router.get('/revenue/owner/:aid', revenueController.getRevenueByOwnerID); // Get revenue by ownerID (AID)
+router.get('/revenue/song/:sid', revenueController.getRevenueBySID); // Get revenue by SID
+router.get('/revenue/total_revenue', revenueController.getTotalRevenue); // Get total revenue
+router.get('/revenue/total_revenueByDate', revenueController.getTotalRevenueByDate); // Get total revenue by date
+router.get('/revenue/total_revenueByArtistAndDate', revenueController.getTotalRevenueByDateAndArtist); // Get total revenue by artist and date
+router.get('/revenue/total_revenueByServiceProvider', revenueController.getTotalRevenueByServiceProvider); // Get total revenue by service provider
 
 // API endpoint for CSV file upload and processing data to the database
 //const multer = require('multer');

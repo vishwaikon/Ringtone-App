@@ -11,7 +11,7 @@ exports.getAllRevenues = (req, res) => {
     res.json(results);
   });
 };
-
+/*
 // Get revenue by RID
 exports.getRevenueById = (req, res) => {
   const rid = req.params.id;
@@ -28,7 +28,7 @@ exports.getRevenueById = (req, res) => {
     res.json(results[0]);
   });
 };
-
+*/
 // Get Revenue by SID
 exports.getRevenueBySID = (req, res) => {
   const sid = req.params.sid;
@@ -59,6 +59,123 @@ exports.getRevenueByOwnerID = (req, res) => {
     }
     if (results.length === 0) {
       res.status(404).json({ message: 'Revenue not found' });
+      return;
+    }
+    res.json(results);
+  });
+};
+///////////////////////////////////////////////////////////////////////////////////////
+/*Dashboard*/
+// Get total revenue for all songs
+exports.getTotalRevenue = (req, res) => {
+  connection.query(`
+  SELECT 
+      s.songName, 
+      s.artistName,
+      s.language,
+      SUM(r.downloads) AS total_downloads,
+      SUM(r.revenue) AS total_revenue
+    FROM 
+      artist_details a
+    JOIN 
+      song_details s ON a.AID = s.AID
+    JOIN 
+      revenue_details r ON a.AID = r.ownerID
+    GROUP BY 
+      s.songName, s.artistName, s.language;
+  `, (error, results) => {
+    if (error) {
+      console.error('Error querying total revenue:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+};
+///////////////////////////////////////////////////////////////////////////////////////
+// Get total revenue for all songs with date range
+exports.getTotalRevenueByDate = (req, res) => {
+  const { startDate, endDate } = req.body;
+  connection.query(`
+    SELECT 
+      s.songName, 
+      s.artistName,
+      s.language,
+      SUM(r.downloads) AS total_downloads,
+      SUM(r.revenue) AS total_revenue
+    FROM 
+      artist_details a
+    JOIN 
+      song_details s ON a.AID = s.AID
+    JOIN 
+      revenue_details r ON a.AID = r.ownerID
+    WHERE 
+      r.date >= ? AND r.date <= ?
+    GROUP BY 
+      s.songName, s.artistName, s.language;
+  `, [startDate, endDate], (error, results) => {
+    if (error) {
+      console.error('Error querying total revenue by date:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+};
+///////////////////////////////////////////////////////////////////////////////////////
+//Get total revenue by service provider
+exports.getTotalRevenueByServiceProvider = (req, res) => {
+  connection.query(`
+    SELECT 
+      s.songName, 
+      s.artistName,
+      s.language, 
+      r.service_provider,
+      SUM(r.downloads) AS total_downloads,
+      SUM(r.revenue) AS total_revenue
+    FROM 
+      artist_details a
+    JOIN 
+      song_details s ON a.AID = s.AID
+    JOIN 
+      revenue_details r ON a.AID = r.ownerID
+    GROUP BY 
+      s.songName, s.artistName, s.language, r.service_provider;
+  `, (error, results) => {
+    if (error) {
+      console.error('Error querying total revenue by service provider:', error);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+};
+///////////////////////////////////////////////////////////////////////////////////////
+// Get total revenue for all songs with date range and artist
+exports.getTotalRevenueByDateAndArtist = (req, res) => {
+  const { startDate, endDate, artistName } = req.body;
+  connection.query(`
+    SELECT 
+      s.songName, 
+      s.artistName,
+      s.language,
+      SUM(r.downloads) AS total_downloads,
+      SUM(r.revenue) AS total_revenue
+    FROM 
+      artist_details a
+    JOIN 
+      song_details s ON a.AID = s.AID
+    JOIN 
+      revenue_details r ON a.AID = r.ownerID
+    WHERE
+      s.artistName = ?
+      AND r.date BETWEEN ? AND ?
+    GROUP BY 
+      s.songName, s.artistName, s.language;
+  `, [artistName, startDate, endDate], (error, results) => {
+    if (error) {
+      console.error('Error querying total revenue by date and artist:', error);
+      res.status(500).json({ message: 'Internal server error' });
       return;
     }
     res.json(results);
