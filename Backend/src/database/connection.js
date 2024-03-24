@@ -3,9 +3,10 @@ const mysql = require('mysql');
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'root',
   database: 'db_ringingtone'
 });
+/*
 // Connect to the database
 connection.connect(err => {
   if (err) {
@@ -14,5 +15,5 @@ connection.connect(err => {
   }
   console.log('Connected to the database');
 });
-
+*/
 module.exports = connection;

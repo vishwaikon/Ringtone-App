@@ -30,6 +30,33 @@ exports.deleteRingtone = (req, res) => {
     res.status(204).end(); // No content to send back
   });
 };
+// Join song_details and ringtone_details tables
+exports.getAllRingtonesWithSongAndArtist = (req, res) => {
+  connection.query(
+    `SELECT 
+        sd.SID,
+        sd.songName,
+        sd.artistName,
+        rd.RTID,
+        rd.Mobitel,
+        rd.Dialog,
+        rd.Hutch,
+        rd.Airtel
+    FROM 
+        song_details sd
+    INNER JOIN 
+        ringtone_details rd ON sd.SID = rd.SID;`,
+    (error, results) => {
+      if (error) {
+        console.error('Error querying ringtones with song and artist:', error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
+      }
+      res.json(results);
+    }
+  );
+};
+
 // Get Ringtone by RTID
 exports.getRingtoneById = (req, res) => {
   const rtid = req.params.id;
@@ -47,46 +74,62 @@ exports.getRingtoneById = (req, res) => {
   });
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Create Ringtone
 exports.createRingtone = (req, res) => {
-  const { SID, Mobitel, Dialog, Hutch, Airtel, RingToneURL } = req.body;
+  const { songName, artistName, Mobitel, Dialog, Hutch, Airtel } = req.body;
 
   connection.query(
-    'INSERT INTO ringtone_details (SID, Mobitel, Dialog, Hutch, Airtel) VALUES (?, ?, ?, ?, ?)',
-    [SID, Mobitel, Dialog, Hutch, Airtel],
+    'INSERT INTO ringtone_details (SID, Mobitel, Dialog, Hutch, Airtel) VALUES ((SELECT SID FROM song_details WHERE songName = ? AND artistName = ?), ?, ?, ?, ?)',
+    [songName, artistName, Mobitel, Dialog, Hutch, Airtel],
     async (error, results) => {
       if (error) {
         console.error('Error creating ringtone:', error);
         res.status(500).json({ message: 'Internal server error' });
         return;
       }
-
-      const RTID = results.insertId;
+      
+      const RTID = results.insertId; // Get the ID of the inserted row
       console.log('RTID:', RTID);
-      try {
-        await connection.beginTransaction();
-        // Update service_provider_details based on non-empty fields
-        if (Mobitel !== undefined) {
-          await InsertServiceProvider(Mobitel, 'Mobitel', SID);
+      
+      // Fetch the SID based on the songName and artistName
+      connection.query(
+        'SELECT SID FROM song_details WHERE songName = ? AND artistName = ?',
+        [songName, artistName],
+        async (error, results) => {
+          if (error) {
+            console.error('Error fetching SID:', error);
+            res.status(500).json({ message: 'Internal server error' });
+            return;
+          }
+          
+          const SID = results[0].SID; // Assuming there's only one matching record
+          console.log('SID:', SID);
+          
+          try {
+            await connection.beginTransaction();
+            // Update service_provider_details based on non-empty fields
+            if (Mobitel !== undefined) {
+              await InsertServiceProvider(Mobitel, 'Mobitel', SID);
+            }
+            if (Dialog !== undefined) {
+              await InsertServiceProvider(Dialog, 'Dialog', SID);
+            }
+            if (Hutch !== undefined) {
+              await InsertServiceProvider(Hutch, 'Hutch', SID);
+            }
+            if (Airtel !== undefined) {
+              await InsertServiceProvider(Airtel, 'Airtel', SID);
+            }
+  
+            await connection.commit();
+  
+            res.status(201).json({ RTID, SID, Mobitel, Dialog, Hutch, Airtel });
+          } catch (error) {
+            await connection.rollback();
+            console.error('Error creating ringtone:', error);
+            res.status(500).json({ message: 'Internal server error' });
+          }
         }
-        if (Dialog !== undefined) {
-          await InsertServiceProvider(Dialog, 'Dialog', SID);
-        }
-        if (Hutch !== undefined) {
-          await InsertServiceProvider(Hutch, 'Hutch', SID);
-        }
-        if (Airtel !== undefined) {
-          await InsertServiceProvider(Airtel, 'Airtel', SID);
-        }
-
-        await connection.commit();
-
-        res.status(201).json({ RTID, SID, Mobitel, Dialog, Hutch, Airtel });
-      } catch (error) {
-        await connection.rollback();
-        console.error('Error creating ringtone:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }
+      );
     }
   );
 };
@@ -102,13 +145,31 @@ async function InsertServiceProvider(spid, serviceProvider, SID) {
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+async function getSID(songName, artistName) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      'SELECT SID FROM song_details WHERE songName = ? AND artistName = ?',
+      [songName, artistName],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(results[0].SID);
+      }
+    );
+  });
+}
 // Update Ringtone by RTID
 exports.updateRingtone = async (req, res) => {
   const RTID = req.params.id;
-  const SID = req.params.sid;
-  const { Mobitel, Dialog, Hutch, Airtel } = req.body;
+  const { songName, artistName, Mobitel, Dialog, Hutch, Airtel } = req.body;
+  
 
   try {
+    // Fetch the SID based on the songName and artistName
+    const SID = await getSID(songName, artistName);
+    console.log('SID:', SID, 'RTID:', RTID);
+
     await connection.beginTransaction();
 
     // Initialize updateQuery with only non-empty fields
@@ -130,10 +191,12 @@ exports.updateRingtone = async (req, res) => {
       updateQuery += 'Airtel = ?, ';
       updateParams.push(Airtel);
     }
+    /*
     if (SID !== undefined) {
       updateQuery += 'SID = ?, ';
       updateParams.push(SID);
     }
+    */
     // Remove the trailing comma and space
     updateQuery = updateQuery.replace(/,\s*$/, '');
     updateQuery += ' WHERE RTID = ?';
@@ -165,6 +228,7 @@ exports.updateRingtone = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+// Update service_provider_details table
 async function updateServiceProvider(spid, serviceProvider, SID, RTID) {
   try {
     await connection.beginTransaction();

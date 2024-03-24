@@ -23,8 +23,9 @@ router.post('/ringtones', ringtoneController.createRingtone); // Create a new ri
 //router.post('/ringtones', uploadRingTone.single('ringtoneFile'), ringtoneController.createRingtone); // Create a new ringtone with file // SID is a required field
 router.get('/ringtones/:id', ringtoneController.getRingtoneById); // Get ringtone by RTID
 //router.put('/ringtones/:id', ringtoneController.updateRingtone); // Update a ringtone
-router.put('/ringtones/:id/:sid', ringtoneController.updateRingtone); // Update a ringtone by RTID will update service_provider_details table
+router.put('/ringtones/:id', ringtoneController.updateRingtone); // Update a ringtone by RTID will update service_provider_details table
 router.delete('/ringtones/:id', ringtoneController.deleteRingtone); // Delete a ringtone
+router.get('/ringtonesbysong', ringtoneController.getAllRingtonesWithSongAndArtist); // Get all ringtones with song and artist
 
 //Service Provider Controller
 const serviceProviderController = require('../controllers/serviceprovidercontroller');
@@ -74,9 +75,12 @@ router.get('/revenue', revenueController.getAllRevenues); // Get all revenue
 router.get('/revenue/owner/:aid', revenueController.getRevenueByOwnerID); // Get revenue by ownerID (AID)
 router.get('/revenue/song/:sid', revenueController.getRevenueBySID); // Get revenue by SID
 router.get('/revenue/total_revenue', revenueController.getTotalRevenue); // Get total revenue
-router.get('/revenue/total_revenueByDate', revenueController.getTotalRevenueByDate); // Get total revenue by date
+router.get('/revenue/total_artist_revenueByDate', revenueController.getTotalArtistRevenueByDate); // Get total revenue by date
 router.get('/revenue/total_revenueByArtistAndDate', revenueController.getTotalRevenueByDateAndArtist); // Get total revenue by artist and date
 router.get('/revenue/total_revenueByServiceProvider', revenueController.getTotalRevenueByServiceProvider); // Get total revenue by service provider
+router.get('/revenue/total_revenueByServiceProviderByDate', revenueController.getTotalRevenueByServiceProviderAndDate); // Get total revenue by service provider and date
+router.get('/revenue/total_artist_revenue', revenueController.getTotalArtistRevenue); // Get total revenue by artist from artist_details table
+//Removed//router.get('/revenue/total_artist_revenueByDateByArtistName', revenueController.getTotalRevenueByDateAndArtistName); // Get total revenue for artist from artist_details table with date range and artist Name
 
 // API endpoint for CSV file upload and processing data to the database
 //const multer = require('multer');
